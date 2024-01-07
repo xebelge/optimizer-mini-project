@@ -34,7 +34,7 @@ def create_domain(preferences):
 def cost_function(solution, preferences, names):
     cost = 0
     for i, partner_idx in enumerate(solution):
-        if i == partner_idx:  # Penalize self-pairing
+        if i == partner_idx:
             cost += 100
         else:
             student = names[i]
@@ -42,25 +42,35 @@ def cost_function(solution, preferences, names):
             if partner in preferences[student]:
                 cost += preferences[student].index(partner)
             else:
-                cost += 10  # Penalize if partner not in preferred list
+                cost += 10
     return cost
 
 def print_solution(solution, names, preferences):
     print("Project Partnerships:")
     for i, partner_idx in enumerate(solution):
-        if i != partner_idx:  # Skip self-pairing in output
+        if i != partner_idx:
             print(f"{names[i]} is paired with {names[partner_idx]}")
-    # Calculate total cost within this function scope
+
     total_cost = cost_function(solution, preferences, names)
     print(f"Total Cost: {total_cost}")
 
+
 def main():
+
     preferences, names = read_preferences('preferences.txt')
-    method_choice = select_optimization_method()
     domain = create_domain(preferences)
     cost_func = lambda sol: cost_function(sol, preferences, names)
-    solution = apply_optimization(method_choice, domain, cost_func)
-    print_solution(solution, names, preferences)  # Now passing preferences
+
+    while True:
+        method_choice = select_optimization_method()
+        solution = apply_optimization(method_choice, domain, cost_func)
+        print_solution(solution, names, preferences)
+
+
+        try_again = input("Would you like to try another optimization method? (yes/no): ")
+        if try_again.lower() != 'yes':
+            break
+
 
 if __name__ == "__main__":
     main()
